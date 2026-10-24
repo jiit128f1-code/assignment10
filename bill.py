@@ -1,6 +1,18 @@
 
 # bill.py - Electricity bill module (legacy code, do not change behaviour)
 
+HOUSEHOLD_TYPE = "H"
+COMMERCIAL_TYPE = "C"
+
+HOUSEHOLD_RATES = (3, 5, 8)
+COMMERCIAL_RATES = (6, 9, 12)
+
+FIRST_SLAB_LIMIT = 100
+SECOND_SLAB_LIMIT = 300
+
+TAX_RATE = 0.18
+SENIOR_DISCOUNT_RATE = 0.05
+LATE_SURCHARGE_RATE = 0.02
 def calc(name, address, units, connection_type, previous_due, senior_flag):
     print('Customer:', name)
     print('Address:', address)
