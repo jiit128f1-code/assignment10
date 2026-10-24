@@ -13,79 +13,37 @@ SECOND_SLAB_LIMIT = 300
 TAX_RATE = 0.18
 SENIOR_DISCOUNT_RATE = 0.05
 LATE_SURCHARGE_RATE = 0.02
+
 def calc(name, address, units, connection_type, previous_due, senior_flag):
-    print('Customer:', name)
-    print('Address:', address)
+    print("Customer:", name)
+    print("Address:", address)
 
-    if connection_type == 'H':
-        if units <= 100:
-            amount = units * 3
-        elif units <= 300:
-            amount = 100 * 3 + (units - 100) * 5
-        else:
-            amount = 100 * 3 + 200 * 5 + (units - 300) * 8
+    total_amount = calculate_total(
+        units, connection_type, previous_due, senior_flag
+    )
 
-    elif connection_type == 'C':
-        if units <= 100:
-            amount = units * 6
-        elif units <= 300:
-            amount = 100 * 6 + (units - 100) * 9
-        else:
-            amount = 100 * 6 + 200 * 9 + (units - 300) * 12
-
-    else:
-        print('bad type')
+    if total_amount is None:
+        print("bad type")
         return -1
 
-    tax_amount = amount * 0.18
-
-    if senior_flag == 1 and connection_type == 'H':
-        amount = amount - amount * 0.05
-    total_amount = amount + tax_amount + previous_due
-
-    if previous_due > 0:
-        total_amount = total_amount + previous_due * 0.02
-
-    print('Total:', total_amount)
+    print("Total:", total_amount)
     return total_amount
 
 
 def calc2(name, address, units, connection_type, previous_due, senior_flag):
-    receipt = ''
-    receipt = receipt + 'Customer: ' + name + '\n'
-    receipt = receipt + 'Address: ' + address + '\n'
+    total_amount = calculate_total(
+        units, connection_type, previous_due, senior_flag
+    )
 
-    if connection_type == 'H':
-        if units <= 100:
-            amount = units * 3
-        elif units <= 300:
-            amount = 100 * 3 + (units - 100) * 5
-        else:
-            amount = 100 * 3 + 200 * 5 + (units - 300) * 8
+    if total_amount is None:
+        return "bad type"
 
-    elif connection_type == 'C':
-        if units <= 100:
-            amount = units * 6
-        elif units <= 300:
-            amount = 100 * 6 + (units - 100) * 9
-        else:
-            amount = 100 * 6 + 200 * 9 + (units - 300) * 12
+    return (
+        f"Customer: {name}\n"
+        f"Address: {address}\n"
+        f"Total: {total_amount}"
+    )
 
-    else:
-        return 'bad type'
-
-    tax_amount = amount * 0.18
-
-    if senior_flag == 1 and connection_type == 'H':
-        amount = amount - amount * 0.05
-
-    total_amount = amount + tax_amount + previous_due
-
-    if previous_due > 0:
-        total_amount = total_amount + previous_due * 0.02
-
-    receipt = receipt + 'Total: ' + str(total_amount)
-    return receipt
 def calculate_slab_amount(units, rates):
     first_rate, second_rate, third_rate = rates
 
@@ -102,4 +60,25 @@ def calculate_slab_amount(units, rates):
         FIRST_SLAB_LIMIT * first_rate
         + (SECOND_SLAB_LIMIT - FIRST_SLAB_LIMIT) * second_rate
         + (units - SECOND_SLAB_LIMIT) * third_rate
+    )
+def calculate_total(units, connection_type, previous_due, senior_flag):
+    if connection_type == HOUSEHOLD_TYPE:
+        rates = HOUSEHOLD_RATES
+    elif connection_type == COMMERCIAL_TYPE:
+        rates = COMMERCIAL_RATES
+    else:
+        return None
+
+    amount = calculate_slab_amount(units, rates)
+    tax_amount = calculate_tax(amount)
+
+    amount = apply_senior_discount(
+        amount, connection_type, senior_flag
+    )
+
+    return (
+        amount
+        + tax_amount
+        + previous_due
+        + calculate_late_surcharge(previous_due)
     )
