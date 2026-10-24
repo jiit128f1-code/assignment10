@@ -86,3 +86,20 @@ def calc2(name, address, units, connection_type, previous_due, senior_flag):
 
     receipt = receipt + 'Total: ' + str(total_amount)
     return receipt
+def calculate_slab_amount(units, rates):
+    first_rate, second_rate, third_rate = rates
+
+    if units <= FIRST_SLAB_LIMIT:
+        return units * first_rate
+
+    if units <= SECOND_SLAB_LIMIT:
+        return (
+            FIRST_SLAB_LIMIT * first_rate
+            + (units - FIRST_SLAB_LIMIT) * second_rate
+        )
+
+    return (
+        FIRST_SLAB_LIMIT * first_rate
+        + (SECOND_SLAB_LIMIT - FIRST_SLAB_LIMIT) * second_rate
+        + (units - SECOND_SLAB_LIMIT) * third_rate
+    )
