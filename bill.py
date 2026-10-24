@@ -14,36 +14,6 @@ TAX_RATE = 0.18
 SENIOR_DISCOUNT_RATE = 0.05
 LATE_SURCHARGE_RATE = 0.02
 
-def calc(name, address, units, connection_type, previous_due, senior_flag):
-    print("Customer:", name)
-    print("Address:", address)
-
-    total_amount = calculate_total(
-        units, connection_type, previous_due, senior_flag
-    )
-
-    if total_amount is None:
-        print("bad type")
-        return -1
-
-    print("Total:", total_amount)
-    return total_amount
-
-
-def calc2(name, address, units, connection_type, previous_due, senior_flag):
-    total_amount = calculate_total(
-        units, connection_type, previous_due, senior_flag
-    )
-
-    if total_amount is None:
-        return "bad type"
-
-    return (
-        f"Customer: {name}\n"
-        f"Address: {address}\n"
-        f"Total: {total_amount}"
-    )
-
 def calculate_slab_amount(units, rates):
     first_rate, second_rate, third_rate = rates
 
@@ -61,6 +31,9 @@ def calculate_slab_amount(units, rates):
         + (SECOND_SLAB_LIMIT - FIRST_SLAB_LIMIT) * second_rate
         + (units - SECOND_SLAB_LIMIT) * third_rate
     )
+        
+def calculate_tax(amount):
+    return amount * TAX_RATE
 def calculate_total(units, connection_type, previous_due, senior_flag):
     if connection_type == HOUSEHOLD_TYPE:
         rates = HOUSEHOLD_RATES
