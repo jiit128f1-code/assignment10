@@ -29,8 +29,6 @@ def calc(name, address, units, connection_type, previous_due, senior_flag):
 
     if senior_flag == 1 and connection_type == 'H':
         amount = amount - amount * 0.05
-
-    temp = amount + tax_amount
     total_amount = amount + tax_amount + previous_due
 
     if previous_due > 0:
